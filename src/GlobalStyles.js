@@ -34,9 +34,8 @@ footer, header, hgroup, main, menu, nav, section {
 }
 body {
     background-image: url(${background_image});
-    background-size: cover;
-    background-color: rgba(23, 128, 40, 0.3);
-    opacity: 0.3;
+    background-size: auto;
+    background-color: rgba(23, 128, 40, 0.4);
     background-blend-mode: multiply;
   line-height: 1;
 }

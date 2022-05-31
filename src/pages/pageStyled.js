@@ -1,0 +1,7 @@
+import styled from "styled-components";
+
+export const Container = styled.div`
+  // padding-top: 75px;
+  margin-left: 2rem;
+  margin-right: 2rem;
+`;
