@@ -39,14 +39,22 @@ const ContentContainer = styled.div`
   width: 70%;
 `;
 const ModalText = styled.div`
+  margin: 60px 0 60px 0;
   font-size: 30px;
   font-weight: 500;
 `;
-const UploadButton = styled.div`
+const UploadButton = styled.button`
+  border: none;
+  border-radius: 50px;
   background-color: #479a54;
-  padding: 5px;
-  font-size: 26px;
+  padding: 15px 60px 15px 60px;
+  font-size: 22px;
+  color: white;
   font-weight: 500;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 function FileModal({ fileModal, setFileModal }) {
   const closeClick = () => {
