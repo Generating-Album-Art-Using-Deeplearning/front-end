@@ -73,6 +73,10 @@ const FileName = styled.div`
     cursor: pointer;
   }
 `;
+const AnalyzeContent = styled.div`
+  font-size: 30px;
+  font-weight: 500;
+`;
 function FileModal({ fileModal, setFileModal }) {
   const [uploadFile, setUploadFile] = React.useState();
   const [analyzingFile, setAnalyzingFile] = React.useState(false);
@@ -80,6 +84,7 @@ function FileModal({ fileModal, setFileModal }) {
 
   const closeClick = () => {
     setUploadFile();
+    setAnalyzingFile(false);
     setFileModal(false);
   };
   const onFileUploadClick = () => {
@@ -92,6 +97,9 @@ function FileModal({ fileModal, setFileModal }) {
   const deleteFileClick = () => {
     setUploadFile();
   };
+  const analyzingFileClick = () => {
+    setAnalyzingFile(true);
+  };
   return (
     <Wrapper modal={fileModal}>
       <ModalContainer>
@@ -99,31 +107,42 @@ function FileModal({ fileModal, setFileModal }) {
           <IoMdClose size={30} onClick={closeClick} />
         </CloseContainer>
         <ContentContainer>
-          {uploadFile ? (
-            <FileName>
-              <div>
-                <BsFileEarmarkMusic /> {uploadFile.name}
-              </div>
-              <div className="fileSize">
-                {Math.round((uploadFile.size / 1024 / 1024) * 10) / 10 + "MB"}{" "}
-                <span className="deleteFileBtn">
-                  <BsTrash onClick={deleteFileClick} />
-                </span>
-              </div>
-            </FileName>
+          {analyzingFile ? (
+            <AnalyzeContent>분석 중...</AnalyzeContent>
           ) : (
-            <ModalText>분석에 필요한 음원 파일을 올려주세요.</ModalText>
-          )}
-          <FileSelect
-            type="file"
-            ref={uploadFileRef}
-            accept="audio/*"
-            onChange={onFileChange}
-          ></FileSelect>
-          {uploadFile ? (
-            <UploadButton>분석하기</UploadButton>
-          ) : (
-            <UploadButton onClick={onFileUploadClick}>파일 업로드</UploadButton>
+            <>
+              {uploadFile ? (
+                <FileName>
+                  <div>
+                    <BsFileEarmarkMusic /> {uploadFile.name}
+                  </div>
+                  <div className="fileSize">
+                    {Math.round((uploadFile.size / 1024 / 1024) * 10) / 10 +
+                      "MB"}{" "}
+                    <span className="deleteFileBtn">
+                      <BsTrash onClick={deleteFileClick} />
+                    </span>
+                  </div>
+                </FileName>
+              ) : (
+                <ModalText>분석에 필요한 음원 파일을 올려주세요.</ModalText>
+              )}
+              <FileSelect
+                type="file"
+                ref={uploadFileRef}
+                accept="audio/*"
+                onChange={onFileChange}
+              ></FileSelect>
+              {uploadFile ? (
+                <UploadButton onClick={analyzingFileClick}>
+                  분석하기
+                </UploadButton>
+              ) : (
+                <UploadButton onClick={onFileUploadClick}>
+                  파일 업로드
+                </UploadButton>
+              )}
+            </>
           )}
         </ContentContainer>
       </ModalContainer>
