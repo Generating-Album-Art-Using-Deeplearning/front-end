@@ -2,6 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 // import modalImage from "../../images/modal_image.jpg";
 import { IoMdClose } from "react-icons/io";
+import { BsTrash, BsFileEarmarkMusic } from "react-icons/bs";
 
 const Wrapper = styled.div`
   position: absolute;
@@ -56,9 +57,40 @@ const UploadButton = styled.button`
     opacity: 0.7;
   }
 `;
+const FileSelect = styled.input`
+  display: none;
+`;
+const FileName = styled.div`
+  margin: 60px 0 60px 0;
+  font-size: 30px;
+  font-weight: 700;
+  .fileSize {
+    margin: 5px;
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .deleteFileBtn {
+    cursor: pointer;
+  }
+`;
 function FileModal({ fileModal, setFileModal }) {
+  const [uploadFile, setUploadFile] = React.useState();
+  const [analyzingFile, setAnalyzingFile] = React.useState(false);
+  const uploadFileRef = React.useRef();
+
   const closeClick = () => {
+    setUploadFile();
     setFileModal(false);
+  };
+  const onFileUploadClick = () => {
+    uploadFileRef.current.click();
+  };
+  const onFileChange = async (e) => {
+    console.log(e.target.files[0]);
+    setUploadFile(e.target.files[0]);
+  };
+  const deleteFileClick = () => {
+    setUploadFile();
   };
   return (
     <Wrapper modal={fileModal}>
@@ -67,8 +99,32 @@ function FileModal({ fileModal, setFileModal }) {
           <IoMdClose size={30} onClick={closeClick} />
         </CloseContainer>
         <ContentContainer>
-          <ModalText>분석에 필요한 음원 파일을 올려주세요.</ModalText>
-          <UploadButton>파일 업로드</UploadButton>
+          {uploadFile ? (
+            <FileName>
+              <div>
+                <BsFileEarmarkMusic /> {uploadFile.name}
+              </div>
+              <div className="fileSize">
+                {Math.round((uploadFile.size / 1024 / 1024) * 10) / 10 + "MB"}{" "}
+                <span className="deleteFileBtn">
+                  <BsTrash onClick={deleteFileClick} />
+                </span>
+              </div>
+            </FileName>
+          ) : (
+            <ModalText>분석에 필요한 음원 파일을 올려주세요.</ModalText>
+          )}
+          <FileSelect
+            type="file"
+            ref={uploadFileRef}
+            accept="audio/*"
+            onChange={onFileChange}
+          ></FileSelect>
+          {uploadFile ? (
+            <UploadButton>분석하기</UploadButton>
+          ) : (
+            <UploadButton onClick={onFileUploadClick}>파일 업로드</UploadButton>
+          )}
         </ContentContainer>
       </ModalContainer>
     </Wrapper>
