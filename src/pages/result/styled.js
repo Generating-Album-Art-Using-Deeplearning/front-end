@@ -13,6 +13,8 @@ export const ResultTitle = styled.div`
 `;
 
 export const AlbumArtListContainer = styled.div`
+  max-width: 1440px;
+  margin: 0 auto;
   text-align: center;
   margin-top: 40px;
   padding: 0 50px 0 50px;
