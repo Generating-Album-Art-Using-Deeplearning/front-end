@@ -3,6 +3,8 @@ import styled from "styled-components";
 // import modalImage from "../../images/modal_image.jpg";
 import { IoMdClose } from "react-icons/io";
 import { BsTrash, BsFileEarmarkMusic } from "react-icons/bs";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   position: absolute;
@@ -44,6 +46,17 @@ const ModalText = styled.div`
   font-size: 30px;
   font-weight: 500;
 `;
+const GenreResultText = styled.div`
+  margin: 20px 0 15px 0;
+  font-size: 25px;
+  font-weight: 400;
+`;
+const GenreText = styled.div`
+  margin: 15px 0 20px 0;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.4;
+`;
 const UploadButton = styled.button`
   border: none;
   border-radius: 50px;
@@ -78,14 +91,41 @@ const AnalyzeContent = styled.div`
   font-weight: 500;
 `;
 function FileModal({ fileModal, setFileModal }) {
+  const navigate = useNavigate();
   const [uploadFile, setUploadFile] = React.useState();
   const [analyzingFile, setAnalyzingFile] = React.useState(false);
+  const [randomTwoGenre, setRandomTwoGenre] = React.useState();
+  const [weight, setWeight] = React.useState();
+  const [generateCover, setGenerateCover] = React.useState(false);
+  const genre = ["뉴에이지", "랩/힙합", "발라드", "일렉트로니카", "POP", "재즈"];
+
   const uploadFileRef = React.useRef();
+
+  useEffect(() => {
+    if (analyzingFile) {
+      setTimeout(() => {
+        const selectedGenre = [];
+        while (selectedGenre.length < 2) {
+          let oneGenre = genre.splice(Math.floor(Math.random() * genre.length), 1)[0];
+          selectedGenre.push(oneGenre);
+        }
+        setRandomTwoGenre(selectedGenre);
+
+        const firstWeight = (Math.floor(Math.random() * 210) + 500) / 10;
+        const secondWeight = (Math.floor(Math.random() * 110) + 200) / 10;
+        const thirdWeight = (Math.floor(Math.random() * 110) + 100) / 10;
+        setWeight([firstWeight, secondWeight, thirdWeight]);
+      }, 3000);
+    }
+  }, [analyzingFile]);
 
   const closeClick = () => {
     setUploadFile();
     setAnalyzingFile(false);
     setFileModal(false);
+    setRandomTwoGenre();
+    setGenerateCover(false);
+    clearTimeout(window.timeOut);
   };
   const onFileUploadClick = () => {
     uploadFileRef.current.click();
@@ -100,6 +140,13 @@ function FileModal({ fileModal, setFileModal }) {
   const analyzingFileClick = () => {
     setAnalyzingFile(true);
   };
+
+  const generateCoverClick = () => {
+    setGenerateCover(true);
+    window.timeOut = setTimeout(() => {
+      navigate("/result");
+    }, 10000);
+  };
   return (
     <Wrapper modal={fileModal}>
       <ModalContainer>
@@ -107,40 +154,50 @@ function FileModal({ fileModal, setFileModal }) {
           <IoMdClose size={30} onClick={closeClick} />
         </CloseContainer>
         <ContentContainer>
-          {analyzingFile ? (
-            <AnalyzeContent>분석 중...</AnalyzeContent>
+          {generateCover ? (
+            <AnalyzeContent>록/메탈 장르의 앨범 커버를 생성 중 입니다...</AnalyzeContent>
           ) : (
             <>
-              {uploadFile ? (
-                <FileName>
-                  <div>
-                    <BsFileEarmarkMusic /> {uploadFile.name}
-                  </div>
-                  <div className="fileSize">
-                    {Math.round((uploadFile.size / 1024 / 1024) * 10) / 10 +
-                      "MB"}{" "}
-                    <span className="deleteFileBtn">
-                      <BsTrash onClick={deleteFileClick} />
-                    </span>
-                  </div>
-                </FileName>
+              {randomTwoGenre ? (
+                <>
+                  <GenreResultText>입력하신 음원의 장르 분석 결과입니다.</GenreResultText>
+                  <GenreText>
+                    록/메탈 {weight[0]}% <br />
+                    {randomTwoGenre[0]} {weight[1]}% <br />
+                    {randomTwoGenre[1]} {weight[2]}%
+                  </GenreText>
+                  <UploadButton onClick={generateCoverClick}>록/메탈 앨범커버 생성하기</UploadButton>
+                </>
               ) : (
-                <ModalText>분석에 필요한 음원 파일을 올려주세요.</ModalText>
-              )}
-              <FileSelect
-                type="file"
-                ref={uploadFileRef}
-                accept="audio/*"
-                onChange={onFileChange}
-              ></FileSelect>
-              {uploadFile ? (
-                <UploadButton onClick={analyzingFileClick}>
-                  분석하기
-                </UploadButton>
-              ) : (
-                <UploadButton onClick={onFileUploadClick}>
-                  파일 업로드
-                </UploadButton>
+                <>
+                  {analyzingFile ? (
+                    <AnalyzeContent>장르를 분석 중 입니다...</AnalyzeContent>
+                  ) : (
+                    <>
+                      {uploadFile ? (
+                        <FileName>
+                          <div>
+                            <BsFileEarmarkMusic /> {uploadFile.name}
+                          </div>
+                          <div className="fileSize">
+                            {Math.round((uploadFile.size / 1024 / 1024) * 10) / 10 + "MB"}{" "}
+                            <span className="deleteFileBtn">
+                              <BsTrash onClick={deleteFileClick} />
+                            </span>
+                          </div>
+                        </FileName>
+                      ) : (
+                        <ModalText>분석에 필요한 음원 파일을 올려주세요.</ModalText>
+                      )}
+                      <FileSelect type="file" ref={uploadFileRef} accept="audio/*" onChange={onFileChange}></FileSelect>
+                      {uploadFile ? (
+                        <UploadButton onClick={analyzingFileClick}>분석하기</UploadButton>
+                      ) : (
+                        <UploadButton onClick={onFileUploadClick}>파일 업로드</UploadButton>
+                      )}
+                    </>
+                  )}
+                </>
               )}
             </>
           )}

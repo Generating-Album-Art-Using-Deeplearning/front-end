@@ -20,8 +20,7 @@ export const AlbumArtListContainer = styled.div`
   padding: 0 50px 0 50px;
   .item_img {
     margin: 0 90px 60px 90px;
-    width: 250px;
-    height: 250px;
+    height: 400px;
   }
 `;
 
